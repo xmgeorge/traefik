@@ -4,22 +4,40 @@ metadata:
   name: traefik-dashboard-service
 
 spec:
-  type: NodePort
   ports:
     - port: 8080
       targetPort: dashboard
   selector:
     app: traefik
+
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
   name: traefik-web-service
 
 spec:
-  type: NodePort
   ports:
     - targetPort: web
       port: 80
   selector:
     app: traefik
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: traefik-dashboard-ingress
+spec:
+  rules:
+  - host: whoami.ourdemoplace.com
+    http:
+      paths:
+      - path: /
+        backend:
+          service:
+            name: traefik-dashboard-service
+            port:
+              name: dashboard
